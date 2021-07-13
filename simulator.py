@@ -86,6 +86,7 @@ class Simulator:
         self.step_mean = 80 # m
         self.step_std = 10 # m
         self.infectious_radius = 0 # m
+        self.default_n_neighbor = 10
 
         self._susceptible = {}
         self._infectious = {}
@@ -284,7 +285,7 @@ class Simulator:
             self.step_mean = 80 # m
             self.step_std = self.step_mean / 4 # m
             self.infectious_radius = self.dlg.box_radius.value()
-            self.knn = KNeighborsClassifier(n_neighbors=10, metric='euclidean')
+            self.knn = KNeighborsClassifier(metric='euclidean')
 
             # Read file situation_initiate
             situation_initiate_file = self.dlg.lineEdit.text()
@@ -330,51 +331,69 @@ class Simulator:
         list_sus_geo = np.array(list_sus_geo)
         list_sus_ids = np.array(list_sus_ids)
 
+        n_neighbors = self.default_n_neighbor
+        if len(list_sus_ids) < n_neighbors:
+            n_neighbors = len(list_sus_ids)
+
         # Get infectious people
         list_inf_geo = []
+        list_inf_ids = []
         for feat in self._inf_layer.getFeatures():
             geom = feat.geometry()
             list_inf_geo.append([geom.get().x(), geom.get().y()])
+            list_inf_ids.append(feat.id())
         list_inf_geo = np.array(list_inf_geo)
+        list_inf_ids = np.array(list_inf_ids)
 
         self.knn.fit(list_sus_geo, list_sus_ids)
-        dist, kneighbors_ids = self.knn.kneighbors(list_inf_geo)
+        dist, kneighbors_ids = self.knn.kneighbors(list_inf_geo, n_neighbors=n_neighbors)
 
-        close_contact_kneighbors_ids = kneighbors_ids[dist <= self.infectious_radius]
-        close_contact_kneighbors_ids = np.unique(close_contact_kneighbors_ids).astype(np.int)
+        new_infectious = {}
+        for inf_id, list_tobe_inf, list_dist in zip(list_inf_ids, kneighbors_ids, dist):
+            list_close_contact = list_tobe_inf[list_dist <= self.infectious_radius]
+            prob = np.random.choice([0, 1], size=list_close_contact.shape[0],
+                                    replace=True, p=[1-self.beta, self.beta])
+            list_close_contact = list_close_contact[prob == 1]
 
-        prob = np.random.choice([0,1], size=close_contact_kneighbors_ids.shape[0],
-                                replace=True, p=[1-self.beta, self.beta])
-        close_contact_kneighbors_ids = close_contact_kneighbors_ids[prob == 1]
+            new_infectious[inf_id] = list_sus_ids[list_close_contact].tolist()
 
-        self._transmit_epidemic(close_contact_kneighbors_ids.tolist())
+        # close_contact_kneighbors_ids = kneighbors_ids[dist <= self.infectious_radius]
+        # raise ValueError(str(close_contact_kneighbors_ids))
+        # new_infectious = {k:v for k, v in zip(list_inf_ids, close_contact_kneighbors_ids)}
+        # close_contact_kneighbors_ids = list_sus_ids[close_contact_kneighbors_ids]
+        # # close_contact_kneighbors_ids = np.unique(close_contact_kneighbors_ids).astype(np.int)
+        #
+        # prob = np.random.choice([0,1], size=close_contact_kneighbors_ids.shape[0],
+        #                         replace=True, p=[1-self.beta, self.beta])
+        # close_contact_kneighbors_ids = close_contact_kneighbors_ids[prob == 1]
 
-    def _transmit_epidemic(self, list_ids):
+        self._transmit_epidemic(new_infectious)
+
+    def _transmit_epidemic(self, new_infectious):
         self._inf_layer.startEditing()
         self._sus_layer.startEditing()
 
-        for id in list_ids:
-            feat = self._sus_layer.getFeature(id)
-            agent_id = feat.attribute("id")
+        delete_ids = []
+        for inf_id, list_ids in new_infectious.items():
+            for id in list_ids:
+                feat = self._sus_layer.getFeature(id)
+                agent_id = feat.attribute("id")
 
-            self._infectious[agent_id] = self._susceptible[agent_id]
-            self._infectious[agent_id].set_status(Status.INFECTIOUS)
-            del self._susceptible[agent_id]
+                if id in delete_ids:
+                    continue
 
-            self._inf_layer.dataProvider().addFeature(feat)
+                self._infectious[agent_id] = self._susceptible[agent_id]
+                self._infectious[agent_id].set_status(Status.INFECTIOUS)
+                self._infectious[agent_id].set_infectious_root(inf_id)
+                del self._susceptible[agent_id]
 
-        self._sus_layer.dataProvider().deleteFeatures(list_ids)
+                self._inf_layer.dataProvider().addFeature(feat)
+                delete_ids.append(id)
+
+        self._sus_layer.dataProvider().deleteFeatures(delete_ids)
 
         self._sus_layer.commitChanges()
         self._inf_layer.commitChanges()
-        #
-        # self._sus_layer.triggerRepaint()
-        # self._inf_layer.triggerRepaint()
-
-        # self._sus_layer.updateExtents()
-        # self._inf_layer.updateExtents()
-        # QgsProject.instance().addMapLayer(self._sus_layer)
-        # QgsProject.instance().addMapLayer(self._inf_layer)
 
     def _run_simulation(self):
         if self.run_steps == 0:
@@ -385,7 +404,6 @@ class Simulator:
         #                                run_steps=self.run_steps,
         #                                step_mean=self.step_mean,
         #                                step_std=self.step_std)
-
         self.timer.timeout.connect(self._next_step)
         self.timer.start(1500)
 

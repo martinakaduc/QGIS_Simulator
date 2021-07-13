@@ -34,7 +34,7 @@
     <rect>
      <x>130</x>
      <y>70</y>
-     <width>531</width>
+     <width>511</width>
      <height>31</height>
     </rect>
    </property>
@@ -57,7 +57,7 @@
     <rect>
      <x>50</x>
      <y>110</y>
-     <width>151</width>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
@@ -68,7 +68,7 @@
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>180</x>
      <y>110</y>
      <width>391</width>
      <height>31</height>
@@ -78,7 +78,7 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>590</x>
      <y>110</y>
      <width>51</width>
      <height>31</height>
@@ -108,7 +108,7 @@
      <rect>
       <x>20</x>
       <y>130</y>
-      <width>131</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -119,16 +119,11 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>310</x>
       <y>110</y>
       <width>111</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="cursor">
      <cursorShape>WaitCursor</cursorShape>
@@ -140,16 +135,11 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>300</x>
       <y>40</y>
       <width>141</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="text">
      <string>Recovery (%)</string>
@@ -158,16 +148,11 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>39</y>
-      <width>141</width>
+      <width>121</width>
       <height>21</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="text">
      <string>Transmission Radius (m)</string>
@@ -178,14 +163,9 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>131</width>
+      <width>121</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="text">
      <string>Transmission Rate</string>
@@ -196,7 +176,7 @@
      <rect>
       <x>20</x>
       <y>60</y>
-      <width>131</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -210,7 +190,7 @@
    <widget class="QDoubleSpinBox" name="box_mu">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>130</y>
       <width>131</width>
       <height>31</height>
@@ -223,9 +203,9 @@
    <widget class="QDoubleSpinBox" name="box_radius">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>60</y>
-      <width>131</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -245,11 +225,6 @@
       <height>20</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
     <property name="contextMenuPolicy">
      <enum>Qt::PreventContextMenu</enum>
     </property>
@@ -260,16 +235,11 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>110</y>
       <width>111</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="text">
      <string>Death Rate (%)</string>
@@ -278,15 +248,15 @@
    <widget class="QDoubleSpinBox" name="box_days">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>310</x>
       <y>130</y>
-      <width>131</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>11</pointsize>
+      <pointsize>8</pointsize>
      </font>
     </property>
     <property name="cursor">
@@ -302,7 +272,7 @@
    <widget class="QDoubleSpinBox" name="box_gamma">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>300</x>
       <y>60</y>
       <width>131</width>
       <height>31</height>

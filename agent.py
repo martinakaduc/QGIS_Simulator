@@ -8,11 +8,15 @@ class Agent():
         self._ward = init_ward
         # histoy = (ward_id, QgsPointXY)
         self._histories = []
+        self._infectious_root = None
 
         self._append_history(init_ward, geometry)
 
     def get_id(self):
         return self._id
+
+    def set_infectious_root(self, id):
+        self._infectious_root = id
 
     def set_status(self, new_status):
         self._status = new_status
